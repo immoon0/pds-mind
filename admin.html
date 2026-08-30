@@ -1,0 +1,1320 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>PD'S MIND - ADMIN</title>
+
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+
+        body {
+
+            margin: 0;
+
+            min-height: 100vh;
+
+            background: #171717;
+
+            color: white;
+
+            font-family: "Courier New", monospace;
+
+            padding: 40px;
+
+        }
+
+
+        .admin-container {
+
+            width: min(100%, 900px);
+
+            margin: 0 auto;
+
+            border: 4px solid white;
+
+            padding: 35px;
+
+            background: #222222;
+
+            box-shadow: 8px 8px 0 #555555;
+
+        }
+
+
+        .title {
+
+            text-align: center;
+
+            font-size: 30px;
+
+            font-weight: bold;
+
+            letter-spacing: 3px;
+
+            margin-bottom: 10px;
+
+        }
+
+
+        .subtitle {
+
+            text-align: center;
+
+            color: #aaaaaa;
+
+            margin-bottom: 35px;
+
+        }
+
+
+        .question-info {
+
+            border: 2px solid #777777;
+
+            padding: 20px;
+
+            margin-bottom: 25px;
+
+            text-align: center;
+
+        }
+
+
+        .question-number {
+
+            font-size: 16px;
+
+            color: #aaaaaa;
+
+            margin-bottom: 10px;
+
+        }
+
+
+        .question-text {
+
+            font-size: 22px;
+
+            font-weight: bold;
+
+        }
+
+
+        .participant-count {
+
+            font-size: 18px;
+
+            margin-bottom: 15px;
+
+        }
+
+
+        .participants {
+
+            border: 2px solid #777777;
+
+            min-height: 100px;
+
+            padding: 15px;
+
+            margin-bottom: 25px;
+
+        }
+
+
+        .participant {
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            padding: 14px;
+
+            margin-bottom: 8px;
+
+            background: #111111;
+
+            border: 2px solid #555555;
+
+        }
+
+
+        .participant:last-child {
+
+            margin-bottom: 0;
+
+        }
+
+
+        .participant-name {
+
+            font-weight: bold;
+
+        }
+
+
+        .participant-answer {
+
+            color: #aaaaaa;
+
+        }
+
+
+        .empty {
+
+            text-align: center;
+
+            color: #777777;
+
+            padding: 25px;
+
+        }
+
+
+        .draw-button {
+
+            width: 100%;
+
+            padding: 20px;
+
+            border: 3px solid white;
+
+            background: white;
+
+            color: #111111;
+
+            font-family: inherit;
+
+            font-size: 20px;
+
+            font-weight: bold;
+
+            cursor: pointer;
+
+        }
+
+
+        .draw-button:hover {
+
+            background: #cccccc;
+
+        }
+
+
+        .draw-button:disabled {
+
+            background: #555555;
+
+            color: #999999;
+
+            border-color: #777777;
+
+            cursor: not-allowed;
+
+        }
+
+
+        .result {
+
+            display: none;
+
+            margin-top: 30px;
+
+            padding: 30px;
+
+            border: 4px solid white;
+
+            text-align: center;
+
+        }
+
+
+        .result.active {
+
+            display: block;
+
+        }
+
+
+        .result-label {
+
+            font-size: 14px;
+
+            color: #aaaaaa;
+
+            margin-bottom: 15px;
+
+        }
+
+
+        .winner-name {
+
+            font-size: 38px;
+
+            font-weight: bold;
+
+            margin-bottom: 10px;
+
+        }
+
+
+        .winner-answer {
+
+            color: #cccccc;
+
+            font-size: 16px;
+
+        }
+
+
+        .next-question-button {
+
+            width: 100%;
+
+            margin-top: 20px;
+
+            padding: 16px;
+
+            border: 3px solid #777777;
+
+            background: #111111;
+
+            color: white;
+
+            font-family: inherit;
+
+            font-size: 16px;
+
+            cursor: pointer;
+
+        }
+
+        .reset-button {
+
+            width: 100%;
+
+            margin-top: 15px;
+
+            padding: 12px;
+
+            border: 2px solid #555555;
+
+            background: #222222;
+
+            color: #aaaaaa;
+
+            font-family: inherit;
+
+            font-size: 14px;
+
+            cursor: pointer;
+
+        }
+
+
+        .reset-button:hover {
+
+            background: #333333;
+
+            color: white;
+
+            border-color: #777777;
+
+        }
+
+
+        .next-question-button:hover {
+
+            background: #333333;
+
+        }
+
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="admin-container">
+
+
+    <div class="title">
+
+        ★ PD'S MIND ★
+
+    </div>
+
+
+    <div class="subtitle">
+
+        ADMINISTRATOR MODE
+
+    </div>
+
+
+
+    <!-- 질문 정보 -->
+
+    <div class="question-info">
+
+        <div
+            class="question-number"
+            id="question-number"
+        >
+
+            QUESTION 1 / 5
+
+        </div>
+
+
+        <div
+            class="question-text"
+            id="question-text"
+        >
+
+            질문을 불러오는 중...
+
+        </div>
+
+    </div>
+
+
+
+    <!-- 참가자 목록 -->
+
+    <div class="participant-count">
+
+        참가자 :
+
+        <span id="participant-count">
+            0
+        </span>
+
+        명
+
+    </div>
+
+
+    <div
+        class="participants"
+        id="participants"
+    >
+
+        <div class="empty">
+
+            아직 답변한 참가자가 없습니다.
+
+        </div>
+
+    </div>
+
+
+
+    <!-- 추첨 버튼 -->
+
+    <button
+        class="draw-button"
+        id="draw-button"
+        onclick="drawWinner()"
+        disabled
+    >
+
+        🎲 DRAW WINNER
+
+    </button>
+
+    <button
+    class="reset-button"
+    onclick="resetGame()"
+    >
+        ↻ RESET GAME
+    </button>
+
+
+
+    <!-- 당첨 결과 -->
+
+    <div
+        class="result"
+        id="result"
+    >
+
+        <div class="result-label">
+
+            ★ WINNER ★
+
+        </div>
+
+
+        <div
+            class="winner-name"
+            id="winner-name"
+        >
+
+        </div>
+
+
+        <div
+            class="winner-answer"
+            id="winner-answer"
+        >
+
+        </div>
+
+
+        <button
+            class="next-question-button"
+            onclick="nextQuestion()"
+        >
+
+            ▶ NEXT QUESTION
+
+        </button>
+
+    </div>
+
+
+</div>
+
+
+
+<script type="module">
+
+
+    // ==========================================
+    // Firebase 기능
+    // ==========================================
+
+
+    import {
+        initializeApp
+    }
+
+    from
+    "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
+
+
+    import {
+
+        getDatabase,
+        ref,
+        onValue,
+        set,
+        remove,
+        get
+
+    }
+
+    from
+    "https://www.gstatic.com/firebasejs/12.18.0/firebase-database.js";
+
+
+
+    // ==========================================
+    // Firebase 설정
+    // ==========================================
+
+
+    const firebaseConfig = {
+
+        apiKey:
+            "AIzaSyBGJX3vmjywW8NWYfdER5o8Gr6VV4djjZ0",
+
+        authDomain:
+            "pds-mind.firebaseapp.com",
+
+        projectId:
+            "pds-mind",
+
+        storageBucket:
+            "pds-mind.firebasestorage.app",
+
+        messagingSenderId:
+            "1033702313593",
+
+        appId:
+            "1:1033702313593:web:c97c173ac5dce1b9764ea8"
+
+    };
+
+
+    // Firebase 시작
+
+    const app =
+        initializeApp(firebaseConfig);
+
+
+    const db =
+        getDatabase(
+            app,
+            "https://pds-mind-default-rtdb.asia-southeast1.firebasedatabase.app"
+        );
+
+
+
+    // ==========================================
+    // 질문 데이터
+    // ==========================================
+
+
+    const questions = [
+
+        {
+            question:
+                "PD님이 가장 좋아하는 예능 장르는?",
+
+            winningAnswerIndex: 0
+        },
+
+        {
+            question:
+                "PD님이 하루 동안 가장 하고 싶은 것은?",
+
+            winningAnswerIndex: 2
+        },
+
+        {
+            question:
+                "PD님이 가장 좋아하는 촬영 장소는?",
+
+            winningAnswerIndex: 1
+        },
+
+        {
+            question:
+                "PD님이 예능에서 가장 중요하다고 생각하는 것은?",
+
+            winningAnswerIndex: 3
+        },
+
+        {
+            question:
+                "PD님이 갑자기 일주일 휴가를 받는다면?",
+
+            winningAnswerIndex: 0
+        }
+
+    ];
+
+
+
+    // ==========================================
+    // 현재 질문
+    // ==========================================
+
+
+    let currentQuestion = 0;
+
+    let participants = [];
+
+    // ==========================================
+    // 게임 상태 저장
+    // ==========================================
+
+    async function updateGameState(status) {
+
+        const gameStateRef =
+            ref(db, "gameState");
+
+        await set(
+         gameStateRef,
+            {
+                currentQuestion: currentQuestion + 1,
+                status: status,
+                updatedAt: Date.now()
+            }
+        );
+
+        console.log(
+            "🎮 게임 상태 업데이트:",
+            {
+                currentQuestion: currentQuestion + 1,
+                status: status
+            }
+        );
+
+    }
+
+
+
+    // ==========================================
+    // 질문 화면 표시
+    // ==========================================
+
+
+    function showQuestionInfo() {
+
+        const questionData =
+            questions[currentQuestion];
+
+
+        document.getElementById(
+            "question-number"
+        ).textContent =
+
+            `QUESTION ${
+                currentQuestion + 1
+            } / ${
+                questions.length
+            }`;
+
+
+        document.getElementById(
+            "question-text"
+        ).textContent =
+
+            questionData.question;
+
+    }
+
+
+
+    // ==========================================
+    // 참가자 목록 실시간 감시
+    // ==========================================
+
+
+    function watchParticipants() {
+
+        const answerRef =
+            ref(
+                db,
+                `answers/question${
+                    currentQuestion + 1
+                }`
+            );
+
+
+        onValue(
+            answerRef,
+            (snapshot) => {
+
+                const data =
+                    snapshot.val();
+
+
+                participants = [];
+
+
+                if (data) {
+
+                    Object.values(data)
+                        .forEach(
+                            participant => {
+
+                                participants.push(
+                                    participant
+                                );
+
+                            }
+                        );
+
+                }
+
+
+                renderParticipants();
+
+            }
+        );
+
+    }
+
+
+
+    // ==========================================
+    // 참가자 목록 그리기
+    // ==========================================
+
+
+    function renderParticipants() {
+
+        const container =
+            document.getElementById(
+                "participants"
+            );
+
+
+        const count =
+            document.getElementById(
+                "participant-count"
+            );
+
+
+        count.textContent =
+            participants.length;
+
+
+        container.innerHTML = "";
+
+
+        if (
+            participants.length === 0
+        ) {
+
+            container.innerHTML = `
+
+                <div class="empty">
+
+                    아직 답변한 참가자가 없습니다.
+
+                </div>
+
+            `;
+
+
+            document.getElementById(
+                "draw-button"
+            ).disabled = true;
+
+
+            return;
+
+        }
+
+
+
+        participants.forEach(
+            participant => {
+
+                const div =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                div.className =
+                    "participant";
+
+
+                div.innerHTML = `
+
+                    <div class="participant-name">
+
+                        ${participant.nickname}
+
+                    </div>
+
+                    <div class="participant-answer">
+
+                        ${participant.answerText}
+
+                    </div>
+
+                `;
+
+
+                container.appendChild(div);
+
+            }
+        );
+
+
+        document.getElementById(
+            "draw-button"
+        ).disabled = false;
+
+    }
+
+
+
+    // ==========================================
+    // 당첨자 추첨
+    // ==========================================
+
+
+    window.drawWinner = async function() {
+
+
+        if (
+            participants.length === 0
+        ) {
+
+            alert(
+                "아직 답변한 참가자가 없습니다."
+            );
+
+            return;
+
+        }
+
+
+        const drawButton =
+            document.getElementById(
+                "draw-button"
+            );
+
+
+        // 중복 클릭 방지
+
+        drawButton.disabled = true;
+
+        drawButton.textContent =
+            "🎲 DRAWING...";
+
+
+
+        // ==================================
+        // 이미 당첨된 참가자 확인
+        // ==================================
+
+        const resultsSnapshot =
+            await get(ref(db, "results"));
+
+        const resultsData =
+            resultsSnapshot.val() || {};
+
+
+        // 지금까지 당첨된 참가자의 UID 수집
+
+        const winnerUIDs = new Set();
+
+        Object.values(resultsData).forEach(
+            questionResult => {
+
+                if (
+                    questionResult.winner
+                    &&
+                    questionResult.winner.uid
+                ) {
+
+                    winnerUIDs.add(
+                        questionResult.winner.uid
+                    );
+
+                }
+
+            }
+        ;
+
+
+        // ==================================
+        // 특정 선택지를 고른 참가자만 후보로 선정
+        // + 이미 당첨된 참가자는 제외
+        // ==================================
+
+        const winningAnswerIndex =
+            questions[currentQuestion].winningAnswerIndex;
+
+
+        const candidates =
+            participants.filter(
+                participant =>
+                    participant.answerIndex === winningAnswerIndex
+                    &&
+                    !winnerUIDs.has(participant.uid)
+            );
+
+
+        console.log(
+            "🎯 추첨 후보:",
+            candidates
+        );
+
+
+        // ==================================
+        // 후보자가 없는 경우
+        // ==================================
+
+        if (candidates.length === 0) {
+
+            alert(
+                "해당 선택지를 고른 참가자가 없습니다.\n\n" +
+                "추첨을 진행할 수 없습니다."
+            );
+
+
+            drawButton.disabled = false;
+
+            drawButton.textContent =
+                "🎲 DRAW WINNER";
+
+            return;
+
+        }
+
+
+        // ==================================
+        // 후보자 중 랜덤 추첨
+        // ==================================
+
+        const randomIndex =
+            Math.floor(
+                Math.random()
+                *
+                candidates.length
+            );
+
+
+        const winner =
+            candidates[randomIndex];
+
+
+        console.log(
+            "🎉 최종 당첨자:",
+            winner
+        );
+
+
+
+
+        try {
+
+            // ==================================
+            // Firebase에 당첨자 저장
+            // ==================================
+
+            const winnerRef =
+                ref(
+                    db,
+                    `results/question${
+                        currentQuestion + 1
+                    }/winner`
+                );
+
+
+            await set(
+                winnerRef,
+                {
+
+                    uid:
+                        winner.uid,
+
+                    nickname:
+                        winner.nickname,
+
+                    answerIndex:
+                        winner.answerIndex,
+
+                    answerText:
+                        winner.answerText,
+
+                    questionNumber:
+                        currentQuestion + 1,
+
+                    selectedAt:
+                        Date.now()
+
+                }
+            );
+
+            // 게임 상태를 "당첨자 발표"로 변경
+
+            await updateGameState("result");
+
+
+            // ==================================
+            // 관리자 화면에도 결과 표시
+            // ==================================
+
+            document.getElementById(
+                "winner-name"
+            ).textContent =
+                winner.nickname;
+
+
+            document.getElementById(
+                "winner-answer"
+            ).textContent =
+                `답변: ${winner.answerText}`;
+
+
+            document.getElementById(
+                "result"
+            ).classList.add("active");
+
+
+            drawButton.textContent =
+                "✓ WINNER SELECTED";
+
+        
+            const nextButton =
+                document.querySelector(
+                    ".next-question-button"
+                );
+
+
+            if (
+                currentQuestion
+                === questions.length - 1
+            ) {
+
+                nextButton.textContent =
+                    "▶ GAME FINISH";
+
+            } else {
+
+                nextButton.textContent =
+                    "▶ NEXT QUESTION";
+
+            }
+
+
+            console.log(
+                "✅ 당첨자 저장 완료!"
+            );
+
+
+        }
+
+        catch (error) {
+
+            console.error(
+                "❌ 당첨자 저장 실패:",
+                error
+            );
+
+
+            alert(
+                "당첨자 저장에 실패했습니다."
+            );
+
+
+            drawButton.disabled =
+                false;
+
+
+            drawButton.textContent =
+                "🎲 DRAW WINNER";
+
+        }
+
+    };
+
+
+
+    // ==========================================
+    // 다음 질문
+    // ==========================================
+
+
+    window.nextQuestion  = async function() {
+
+
+        if (
+            currentQuestion
+            >= questions.length - 1
+        ) {
+
+            await updateGameState("finished");
+
+            alert(
+                "모든 질문이 끝났습니다!"
+            );
+
+            return;
+
+        }
+
+
+        currentQuestion++;
+
+
+        // 결과 화면 제거
+
+        document.getElementById(
+            "result"
+        ).classList.remove("active");
+
+
+        const drawButton =
+            document.getElementById(
+                "draw-button"
+            );
+
+
+        drawButton.disabled =
+            true;
+
+
+        drawButton.textContent =
+            "🎲 DRAW WINNER";
+
+
+        showQuestionInfo();
+
+        watchParticipants();
+
+        await updateGameState("answering");
+
+
+    };
+
+    // ==========================================
+    // 게임 전체 초기화
+    // ==========================================
+
+    window.resetGame = async function() {
+
+        // 정말 초기화할 것인지 확인
+        const confirmed =
+            confirm(
+                "⚠️ 정말 게임을 초기화할까요?\n\n" +
+                "모든 참가자의 답변과 당첨자 기록이 삭제됩니다."
+            );
+
+
+        // 취소했다면 아무것도 하지 않음
+        if (!confirmed) {
+
+            return;
+
+        }
+
+
+        try {
+
+            console.log("🔄 게임 초기화 시작...");
+
+
+            // =====================================
+            // ① Firebase의 답변 데이터 삭제
+            // =====================================
+
+            await remove(
+              ref(db, "answers")
+            );
+
+
+            // =====================================
+            // ② Firebase의 당첨자 데이터 삭제
+            // =====================================
+
+            await remove(
+               ref(db, "results")
+            );
+
+
+            console.log("🗑️ Firebase 게임 데이터 삭제 완료");
+
+            // =====================================
+            // ③ Firebase의 게임 상태 삭제
+            // =====================================
+
+            await remove(
+                ref(db, "gameState")
+            );
+
+
+            // =====================================
+            // ③ 관리자 화면 Q1으로 초기화
+            // =====================================
+
+            currentQuestion = 0;
+
+
+            // =====================================
+            // ④ 결과 화면 숨기기
+            // =====================================
+
+            document.getElementById(
+              "result"
+            ).classList.remove("active");
+
+
+            // =====================================
+            // ⑤ DRAW 버튼 초기화
+            // =====================================
+
+            const drawButton =
+              document.getElementById(
+                 "draw-button"
+             );
+
+
+            drawButton.disabled = true;
+
+            drawButton.textContent =
+                "🎲 DRAW WINNER";
+
+
+            // =====================================
+            // ⑥ 참가자 목록 초기화
+            // =====================================
+
+            participants = [];
+
+
+            renderParticipants();
+
+
+            // =====================================
+            // ⑦ Q1 표시
+            // =====================================
+
+        showQuestionInfo();
+
+        watchParticipants();
+
+        await updateGameState("answering");
+
+
+        // =====================================
+        // 완료 메시지
+        // =====================================
+
+        alert(
+            "✅ 게임이 초기화되었습니다!\n\n" +
+            "QUESTION 1부터 다시 시작할 수 있습니다."
+        );
+
+
+        console.log("🎮 게임 초기화 완료!");
+
+    }
+
+
+    catch (error) {
+
+        console.error(
+            "❌ 게임 초기화 실패:",
+            error
+        );
+
+
+        alert(
+            "게임 초기화에 실패했습니다.\n" +
+            "콘솔에서 오류를 확인해주세요."
+        );
+
+    }
+
+};
+
+
+
+    // ==========================================
+    // 시작
+    // ==========================================
+
+
+    showQuestionInfo();
+
+    watchParticipants();
+
+    updateGameState("answering");
+
+
+</script>
+
+
+</body>
+
+</html>
