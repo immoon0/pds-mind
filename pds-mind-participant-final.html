@@ -1,0 +1,2272 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>조연출로 살아남기! PD님과 일심동체</title>
+
+
+    <style>
+
+        /* ========================================= */
+        /* 기본 설정 */
+        /* ========================================= */
+
+        * {
+            box-sizing: border-box;
+        }
+
+
+        :root {
+            --bg: #111111;
+            --panel: #1d1d1d;
+            --panel-dark: #151515;
+            --white: #f5f5f5;
+            --gray: #888888;
+            --dark-gray: #444444;
+            --black: #080808;
+        }
+
+
+        body {
+
+            margin: 0;
+
+            min-height: 100vh;
+
+            background:
+                linear-gradient(
+                    rgba(255,255,255,0.025) 1px,
+                    transparent 1px
+                ),
+                linear-gradient(
+                    90deg,
+                    rgba(255,255,255,0.025) 1px,
+                    transparent 1px
+                ),
+                var(--bg);
+
+            background-size: 8px 8px;
+
+            color: var(--white);
+
+            font-family:
+                "Courier New",
+                "Noto Sans KR",
+                monospace;
+
+            display: flex;
+
+            justify-content: center;
+
+            align-items: center;
+
+            padding: 20px;
+
+            image-rendering: pixelated;
+
+            overflow-x: hidden;
+        }
+
+
+        /* ========================================= */
+        /* CRT / 픽셀 화면 효과 */
+        /* ========================================= */
+
+        body::before {
+
+            content: "";
+
+            position: fixed;
+
+            inset: 0;
+
+            pointer-events: none;
+
+            background:
+                repeating-linear-gradient(
+                    to bottom,
+                    rgba(255,255,255,0.025),
+                    rgba(255,255,255,0.025) 1px,
+                    transparent 1px,
+                    transparent 4px
+                );
+
+            z-index: 10;
+
+        }
+
+
+        /* ========================================= */
+        /* 게임 전체 박스 */
+        /* ========================================= */
+
+        .game-container {
+
+            position: relative;
+
+            width: min(100%, 560px);
+
+            min-height: 620px;
+
+            padding: 30px 28px;
+
+            background: var(--panel);
+
+            border: 4px solid var(--white);
+
+            box-shadow:
+                8px 8px 0 var(--dark-gray),
+                0 0 0 4px var(--black);
+
+        }
+
+
+        /* 픽셀 모서리 장식 */
+
+        .game-container::before,
+        .game-container::after {
+
+            content: "";
+
+            position: absolute;
+
+            width: 14px;
+
+            height: 14px;
+
+            background: var(--white);
+
+        }
+
+
+        .game-container::before {
+
+            top: -4px;
+
+            left: -4px;
+
+        }
+
+
+        .game-container::after {
+
+            bottom: -4px;
+
+            right: -4px;
+
+        }
+
+
+        /* ========================================= */
+        /* 공통 화면 */
+        /* ========================================= */
+
+        .screen {
+
+            display: none;
+
+            animation: screenIn 0.25s steps(3);
+
+        }
+
+
+        .screen.active {
+
+            display: block;
+
+        }
+
+
+        @keyframes screenIn {
+
+            0% {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+        }
+
+
+        /* ========================================= */
+        /* 타이틀 */
+        /* ========================================= */
+
+        .title {
+
+            text-align: center;
+
+            font-size: clamp(19px, 5vw, 27px);
+
+            font-weight: bold;
+
+            line-height: 1.5;
+
+            letter-spacing: 1px;
+
+            margin-bottom: 8px;
+
+            text-shadow:
+                3px 3px 0 var(--black);
+
+        }
+
+
+        .subtitle {
+
+            text-align: center;
+
+            color: var(--gray);
+
+            font-size: 11px;
+
+            letter-spacing: 1px;
+
+            margin-bottom: 28px;
+
+        }
+
+
+        /* ========================================= */
+        /* 픽셀 구분선 */
+        /* ========================================= */
+
+        .pixel-line {
+
+            height: 4px;
+
+            background:
+                repeating-linear-gradient(
+                    90deg,
+                    var(--white) 0px,
+                    var(--white) 8px,
+                    transparent 8px,
+                    transparent 12px
+                );
+
+            margin: 22px 0;
+
+        }
+
+
+        /* ========================================= */
+        /* PLAYER NAME */
+        /* ========================================= */
+
+        .player-label {
+
+            text-align: center;
+
+            font-size: 12px;
+
+            color: var(--gray);
+
+            margin-bottom: 10px;
+
+            letter-spacing: 2px;
+
+        }
+
+
+        input {
+
+            width: 100%;
+
+            padding: 16px 12px;
+
+            background: var(--black);
+
+            color: var(--white);
+
+            border: 3px solid var(--dark-gray);
+
+            outline: none;
+
+            font-family: inherit;
+
+            font-size: 16px;
+
+            text-align: center;
+
+            border-radius: 0;
+
+        }
+
+
+        input:focus {
+
+            border-color: var(--white);
+
+            box-shadow:
+                4px 4px 0 var(--dark-gray);
+
+        }
+
+
+        input::placeholder {
+
+            color: #555555;
+
+        }
+
+
+        /* ========================================= */
+        /* 공통 버튼 */
+        /* ========================================= */
+
+        button {
+
+            width: 100%;
+
+            margin-top: 16px;
+
+            padding: 15px;
+
+            border: 3px solid var(--white);
+
+            background: var(--white);
+
+            color: var(--black);
+
+            font-family: inherit;
+
+            font-size: 15px;
+
+            font-weight: bold;
+
+            cursor: pointer;
+
+            border-radius: 0;
+
+            transition: none;
+
+        }
+
+
+        button:hover {
+
+            transform: translate(
+                -2px,
+                -2px
+            );
+
+            box-shadow:
+                4px 4px 0 var(--dark-gray);
+
+        }
+
+
+        button:active {
+
+            transform: translate(
+                2px,
+                2px
+            );
+
+            box-shadow: none;
+
+        }
+
+
+        button:disabled {
+
+            cursor: not-allowed;
+
+            background: #333333;
+
+            color: #666666;
+
+            border-color: #555555;
+
+            box-shadow: none;
+
+            transform: none;
+
+        }
+
+
+        /* ========================================= */
+        /* 시작 화면 */
+        /* ========================================= */
+
+        .start-logo {
+
+            margin: 20px 0 28px;
+
+            padding: 20px 10px;
+
+            border: 3px solid var(--white);
+
+            background: var(--black);
+
+            text-align: center;
+
+        }
+
+
+        .start-logo .pixel-star {
+
+            font-size: 18px;
+
+            margin-bottom: 12px;
+
+        }
+
+
+        .start-logo .main-copy {
+
+            font-size: 18px;
+
+            font-weight: bold;
+
+            line-height: 1.7;
+
+        }
+
+
+        .start-logo .small-copy {
+
+            margin-top: 10px;
+
+            color: var(--gray);
+
+            font-size: 11px;
+
+        }
+
+
+        .warning {
+
+            text-align: center;
+
+            margin-top: 20px;
+
+            color: #666666;
+
+            font-size: 10px;
+
+            line-height: 1.7;
+
+        }
+
+
+        /* ========================================= */
+        /* 게임 진행도 */
+        /* ========================================= */
+
+        .progress-header {
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            margin-bottom: 10px;
+
+            font-size: 11px;
+
+            color: var(--gray);
+
+        }
+
+
+        .progress-title {
+
+            letter-spacing: 2px;
+
+        }
+
+
+        .progress-number {
+
+            color: var(--white);
+
+            font-weight: bold;
+
+        }
+
+
+        .progress-bar {
+
+            display: flex;
+
+            gap: 5px;
+
+            margin-bottom: 28px;
+
+        }
+
+
+        .progress-step {
+
+            flex: 1;
+
+            height: 8px;
+
+            background: #333333;
+
+            border: 1px solid #555555;
+
+        }
+
+
+        .progress-step.active {
+
+            background: var(--white);
+
+            border-color: var(--white);
+
+            box-shadow:
+                2px 2px 0 var(--dark-gray);
+
+        }
+
+
+        .progress-step.current {
+
+            animation: blinkPixel 0.8s steps(2) infinite;
+
+        }
+
+
+        @keyframes blinkPixel {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.35;
+            }
+
+        }
+
+
+        /* ========================================= */
+        /* 질문 번호 */
+        /* ========================================= */
+
+        .question-number {
+
+            display: inline-block;
+
+            padding: 6px 10px;
+
+            background: var(--white);
+
+            color: var(--black);
+
+            font-size: 12px;
+
+            font-weight: bold;
+
+            margin-bottom: 16px;
+
+        }
+
+
+        /* ========================================= */
+        /* 질문 */
+        /* ========================================= */
+
+        .question-box {
+
+            padding: 22px 15px;
+
+            background: var(--black);
+
+            border: 3px solid var(--dark-gray);
+
+            box-shadow:
+                5px 5px 0 var(--dark-gray);
+
+            margin-bottom: 25px;
+
+        }
+
+
+        .question {
+
+            font-size: 20px;
+
+            font-weight: bold;
+
+            line-height: 1.6;
+
+            text-align: center;
+
+            word-break: keep-all;
+
+        }
+
+
+        /* ========================================= */
+        /* 선택지 */
+        /* ========================================= */
+
+        .choice {
+
+            position: relative;
+
+            display: block;
+
+            width: 100%;
+
+            margin-top: 10px;
+
+            padding: 15px 14px;
+
+            background: #171717;
+
+            color: var(--white);
+
+            border: 3px solid #555555;
+
+            font-family: inherit;
+
+            font-size: 14px;
+
+            text-align: left;
+
+            cursor: pointer;
+
+            box-shadow: none;
+
+        }
+
+
+        .choice:hover {
+
+            background: #292929;
+
+            border-color: var(--white);
+
+            transform: none;
+
+            box-shadow:
+                4px 4px 0 var(--dark-gray);
+
+        }
+
+
+        .choice.selected {
+
+            background: var(--white);
+
+            color: var(--black);
+
+            border-color: var(--white);
+
+            box-shadow:
+                4px 4px 0 var(--dark-gray);
+
+        }
+
+
+        .choice.selected::after {
+
+            content: "◀ SELECTED";
+
+            position: absolute;
+
+            right: 10px;
+
+            top: 50%;
+
+            transform: translateY(-50%);
+
+            font-size: 9px;
+
+            font-weight: bold;
+
+        }
+
+
+        /* ========================================= */
+        /* LOCK ANSWER 버튼 */
+        /* ========================================= */
+
+        .lock-button {
+
+            margin-top: 25px;
+
+            font-size: 16px;
+
+            letter-spacing: 1px;
+
+        }
+
+
+        .lock-button:not(:disabled) {
+
+            animation:
+                buttonPulse 1.2s steps(2) infinite;
+
+        }
+
+
+        @keyframes buttonPulse {
+
+            0%,
+            100% {
+                box-shadow:
+                    4px 4px 0 var(--dark-gray);
+            }
+
+            50% {
+                box-shadow:
+                    7px 7px 0 var(--dark-gray);
+            }
+
+        }
+
+
+        /* ========================================= */
+        /* WAITING 화면 */
+        /* ========================================= */
+
+        .waiting-box {
+
+            margin-top: 55px;
+
+            padding: 25px 15px;
+
+            background: var(--black);
+
+            border: 3px solid var(--white);
+
+            text-align: center;
+
+            box-shadow:
+                6px 6px 0 var(--dark-gray);
+
+        }
+
+
+        .waiting-icon {
+
+            font-size: 26px;
+
+            margin-bottom: 20px;
+
+            animation:
+                pixelBlink 0.9s steps(2) infinite;
+
+        }
+
+
+        @keyframes pixelBlink {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.25;
+            }
+
+        }
+
+
+        .waiting-title {
+
+            font-size: 22px;
+
+            font-weight: bold;
+
+            margin-bottom: 18px;
+
+        }
+
+
+        .waiting-status {
+
+            display: inline-block;
+
+            margin-top: 15px;
+
+            padding: 8px 12px;
+
+            background: #222222;
+
+            border: 2px solid #555555;
+
+            font-size: 11px;
+
+        }
+
+
+        .waiting-dots {
+
+            margin-top: 25px;
+
+            font-size: 18px;
+
+            letter-spacing: 6px;
+
+        }
+
+
+        .waiting-dots span {
+
+            animation:
+                dotBlink 1.2s steps(2) infinite;
+
+        }
+
+
+        .waiting-dots span:nth-child(2) {
+
+            animation-delay: 0.2s;
+
+        }
+
+
+        .waiting-dots span:nth-child(3) {
+
+            animation-delay: 0.4s;
+
+        }
+
+
+        @keyframes dotBlink {
+
+            0%,
+            100% {
+                opacity: 0.2;
+            }
+
+            50% {
+                opacity: 1;
+            }
+
+        }
+
+
+        /* ========================================= */
+        /* GAME CLEAR */
+        /* ========================================= */
+
+        .clear-box {
+
+            margin-top: 70px;
+
+            padding: 30px 18px;
+
+            background: var(--black);
+
+            border: 4px solid var(--white);
+
+            text-align: center;
+
+            box-shadow:
+                7px 7px 0 var(--dark-gray);
+
+            animation:
+                clearAppear 0.5s steps(4);
+
+        }
+
+
+        @keyframes clearAppear {
+
+            0% {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+
+            60% {
+                transform: scale(1.05);
+                opacity: 1;
+            }
+
+            100% {
+                transform: scale(1);
+            }
+
+        }
+
+
+        .clear-title {
+
+            font-size: 25px;
+
+            font-weight: bold;
+
+            line-height: 1.5;
+
+            margin-bottom: 28px;
+
+        }
+
+
+        .clear-message {
+
+            font-size: 15px;
+
+            line-height: 2;
+
+            color: var(--white);
+
+        }
+
+
+        .clear-thanks {
+
+            margin-top: 22px;
+
+            font-size: 13px;
+
+            letter-spacing: 2px;
+
+            color: var(--gray);
+
+        }
+
+
+        .clear-stars {
+
+            margin-bottom: 18px;
+
+            letter-spacing: 6px;
+
+            font-size: 13px;
+
+        }
+
+
+        /* ========================================= */
+        /* 작은 화면 대응 */
+        /* ========================================= */
+
+        @media (max-width: 480px) {
+
+            body {
+
+                padding: 12px;
+
+            }
+
+
+            .game-container {
+
+                padding: 24px 18px;
+
+                min-height: 580px;
+
+                box-shadow:
+                    5px 5px 0 var(--dark-gray),
+                    0 0 0 3px var(--black);
+
+            }
+
+
+            .title {
+
+                font-size: 18px;
+
+            }
+
+
+            .question {
+
+                font-size: 18px;
+
+            }
+
+
+            .choice {
+
+                font-size: 13px;
+
+                padding: 14px 12px;
+
+            }
+
+
+            .choice.selected::after {
+
+                display: none;
+
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="game-container">
+
+
+    <!-- ================================= -->
+    <!-- 시작 화면 -->
+    <!-- ================================= -->
+
+    <div id="start-screen" class="screen active">
+
+
+        <div class="title">
+
+            ★조연출로 살아남기★ <br>
+            PD님과 일심동체 
+
+        </div>
+
+
+        <div class="subtitle">
+
+            [ PD'S MIND : UNITY GAME ]
+
+        </div>
+
+
+        <div class="start-logo">
+
+            <div class="pixel-star">
+                ★ ★ ★
+            </div>
+
+
+            <div class="main-copy">
+
+                PD님의 마음을<br>
+                정확히 맞혀라!
+
+            </div>
+
+
+            <div class="small-copy">
+
+                2 QUESTIONS
+
+            </div>
+
+        </div>
+
+
+        <div class="pixel-line"></div>
+
+
+        <div class="player-label">
+
+            PLAYER NAME
+
+        </div>
+
+
+        <input
+            type="text"
+            id="nickname"
+            placeholder="이름을 입력하세요"
+            maxlength="10"
+        >
+
+
+        <button onclick="startGame()">
+
+            ▶ START GAME
+
+        </button>
+
+
+        <div class="warning">
+
+            ※ 이름은 다른 참가자에게 공개될 수 있습니다.
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ================================= -->
+    <!-- 질문 화면 -->
+    <!-- ================================= -->
+
+    <div id="question-screen" class="screen">
+
+
+        <div class="progress-header">
+
+            <span class="progress-title">
+                GAME PROGRESS
+            </span>
+
+            <span
+                class="progress-number"
+                id="progress-number"
+            >
+                Q 01 / 02
+            </span>
+
+        </div>
+
+
+        <div
+            class="progress-bar"
+            id="progress-bar"
+        >
+
+            <div class="progress-step current"></div>
+            <div class="progress-step"></div>
+
+        </div>
+
+
+        <div
+            class="question-number"
+            id="question-number"
+        >
+            QUESTION 1 / 2
+        </div>
+
+
+        <div class="question-box">
+
+            <div
+                class="question"
+                id="question"
+            >
+                질문이 들어갑니다.
+            </div>
+
+        </div>
+
+
+        <div id="choices">
+
+            <!-- 선택지가 자동 생성됩니다 -->
+
+        </div>
+
+
+        <button
+            class="lock-button"
+            id="next-button"
+            onclick="nextQuestion()"
+            disabled
+        >
+
+            ▶ LOCK ANSWER
+
+        </button>
+
+
+    </div>
+
+
+
+    <!-- ================================= -->
+    <!-- WAITING 화면 -->
+    <!-- ================================= -->
+
+    <div id="waiting-screen" class="screen">
+
+
+        <div class="waiting-box">
+
+
+            <div class="waiting-icon">
+
+                ⌛
+
+            </div>
+
+
+            <div class="waiting-title">
+
+                ANSWER LOCKED
+
+            </div>
+
+
+            <div class="pixel-line"></div>
+
+
+            <div class="clear-message">
+
+                답변이 제출되었습니다.
+
+                <br><br>
+
+                현재 당첨자를 추첨하고 있습니다.
+
+                <br><br>
+
+                <strong id="waiting-question">
+
+                    QUESTION 1
+
+                </strong>
+
+            </div>
+
+
+            <div
+                class="waiting-status"
+                id="waiting-status"
+            >
+
+                PLEASE WAIT...
+
+            </div>
+
+
+            <div class="waiting-dots">
+
+                <span>●</span>
+                <span>●</span>
+                <span>●</span>
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+
+
+    <!-- ================================= -->
+    <!-- GAME CLEAR 화면 -->
+    <!-- ================================= -->
+
+    <div
+        id="complete-screen"
+        class="screen"
+    >
+
+
+        <div class="clear-box">
+
+
+            <div class="clear-stars">
+
+                ★ ★ ★
+
+            </div>
+
+
+            <div class="clear-title">
+
+                ★ GAME CLEAR ★
+
+            </div>
+
+
+            <div class="clear-message">
+
+                <span id="player-name-result"></span>님,
+
+                <br>
+
+                모든 질문이 종료되었습니다!
+
+            </div>
+
+
+            <div class="clear-thanks">
+
+                THANK YOU FOR PLAYING!
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+
+</div>
+
+
+
+<!-- ========================================= -->
+<!-- 게임 질문 데이터 -->
+<!-- ========================================= -->
+
+<script>
+
+
+const questions = [
+
+
+    {
+
+        question:
+            "PD님이 가장 좋아하는 예능 장르는?",
+
+        choices: [
+
+            "여행 예능",
+            "관찰 예능",
+            "추리 예능",
+            "토크 예능"
+
+        ]
+
+    },
+
+
+    {
+
+        question:
+            "PD님이 하루 동안 가장 하고 싶은 것은?",
+
+        choices: [
+
+            "여행 가기",
+            "집에서 푹 쉬기",
+            "맛집 투어",
+            "영화 몰아보기"
+
+        ]
+
+    }
+
+];
+
+
+
+/* ========================================= */
+/* 게임 변수 */
+/* ========================================= */
+
+
+let currentQuestion = 0;
+
+let selectedAnswer = null;
+
+let playerName = "";
+
+let answers = [];
+
+// 참가자가 START를 눌렀는지 여부
+window.gameStarted = false;
+
+// Firebase에서 마지막으로 받은 게임 상태
+window.latestGameState = null;
+
+
+
+/* ========================================= */
+/* 화면 전환 */
+/* ========================================= */
+
+
+function showScreen(screenId) {
+
+
+    document
+        .querySelectorAll(".screen")
+        .forEach(screen => {
+
+            screen.classList.remove("active");
+
+        });
+
+
+    document
+        .getElementById(screenId)
+        .classList.add("active");
+
+}
+
+
+
+/* ========================================= */
+/* 게임 시작 */
+/* ========================================= */
+
+
+function startGame() {
+
+
+    const nicknameInput =
+        document.getElementById("nickname");
+
+
+    playerName =
+        nicknameInput.value.trim();
+
+
+    window.currentPlayerName =
+        playerName;
+
+
+    if (playerName === "") {
+
+        alert(
+            "닉네임을 입력해주세요!"
+        );
+
+        return;
+
+    }
+
+
+    currentQuestion = 0;
+
+    answers = [];
+
+    window.gameStarted = true;
+
+    // 질문 화면은 Firebase의 gameState가 결정합니다.
+    // 이미 관리자가 질문을 진행 중이라면 해당 질문을 바로 보여줍니다.
+    const gameState = window.latestGameState;
+
+    if (
+        gameState
+        && gameState.status === "answering"
+        && gameState.currentQuestion >= 1
+        && gameState.currentQuestion <= questions.length
+    ) {
+        currentQuestion = gameState.currentQuestion - 1;
+        showQuestion();
+    }
+
+}
+
+
+
+/* ========================================= */
+/* 진행도 표시 */
+/* ========================================= */
+
+
+function updateProgress() {
+
+
+    const progressNumber =
+        document.getElementById(
+            "progress-number"
+        );
+
+
+    progressNumber.textContent =
+        `Q ${String(
+            currentQuestion + 1
+        ).padStart(2, "0")} / ${questions.length}`;
+
+
+    const steps =
+        document.querySelectorAll(
+            ".progress-step"
+        );
+
+
+    steps.forEach(
+        (step, index) => {
+
+
+            step.classList.remove(
+                "active"
+            );
+
+
+            step.classList.remove(
+                "current"
+            );
+
+
+            if (
+                index <= currentQuestion
+            ) {
+
+                step.classList.add(
+                    "active"
+                );
+
+            }
+
+
+            if (
+                index === currentQuestion
+            ) {
+
+                step.classList.add(
+                    "current"
+                );
+
+            }
+
+        }
+    );
+
+}
+
+
+
+/* ========================================= */
+/* 질문 보여주기 */
+/* ========================================= */
+
+
+function showQuestion() {
+
+
+    const questionData =
+        questions[currentQuestion];
+
+
+    selectedAnswer = null;
+
+
+    document.getElementById(
+        "question-number"
+    ).textContent =
+
+        `QUESTION ${
+            currentQuestion + 1
+        } / ${
+            questions.length
+        }`;
+
+
+    document.getElementById(
+        "question"
+    ).textContent =
+
+        questionData.question;
+
+
+    updateProgress();
+
+
+
+    const choicesContainer =
+        document.getElementById(
+            "choices"
+        );
+
+
+    choicesContainer.innerHTML = "";
+
+
+
+    questionData.choices.forEach(
+        (choice, index) => {
+
+
+            const button =
+                document.createElement(
+                    "button"
+                );
+
+
+            button.className =
+                "choice";
+
+
+            button.textContent =
+                `${String.fromCharCode(
+                    65 + index
+                )}. ${choice}`;
+
+
+            button.onclick =
+                () =>
+                    selectChoice(
+                        index,
+                        button
+                    );
+
+
+            choicesContainer.appendChild(
+                button
+            );
+
+        }
+    );
+
+
+
+    const nextButton =
+        document.getElementById(
+            "next-button"
+        );
+
+
+    nextButton.disabled = true;
+
+    nextButton.style.opacity = "0.4";
+
+    nextButton.textContent =
+        "▶ LOCK ANSWER";
+
+
+    showScreen(
+        "question-screen"
+    );
+
+}
+
+
+
+/* ========================================= */
+/* 선택지 선택 */
+/* ========================================= */
+
+
+function selectChoice(
+    index,
+    button
+) {
+
+
+    selectedAnswer = index;
+
+
+    document
+        .querySelectorAll(".choice")
+        .forEach(choice => {
+
+            choice.classList.remove(
+                "selected"
+            );
+
+        });
+
+
+    button.classList.add(
+        "selected"
+    );
+
+
+    const nextButton =
+        document.getElementById(
+            "next-button"
+        );
+
+
+    nextButton.disabled = false;
+
+    nextButton.style.opacity = "1";
+
+
+}
+
+
+
+/* ========================================= */
+/* 답변 제출 */
+/* ========================================= */
+
+
+async function nextQuestion() {
+
+
+    if (
+        selectedAnswer === null
+    ) {
+
+        alert(
+            "답변을 선택해주세요!"
+        );
+
+        return;
+
+    }
+
+
+    const questionData =
+        questions[currentQuestion];
+
+
+    const answerText =
+        questionData.choices[
+            selectedAnswer
+        ];
+
+
+    const questionNumber =
+        currentQuestion + 1;
+
+
+    try {
+
+
+        const nextButton =
+            document.getElementById(
+                "next-button"
+            );
+
+
+        nextButton.disabled = true;
+
+        nextButton.textContent =
+            "SAVING...";
+
+        nextButton.style.opacity =
+            "0.4";
+
+
+
+        await window.saveAnswer(
+
+            questionNumber,
+
+            selectedAnswer,
+
+            answerText
+
+        );
+
+
+        answers.push(
+            selectedAnswer
+        );
+
+
+        console.log(
+            `💾 Q${questionNumber} 답변:`,
+            answerText
+        );
+
+
+
+        document.getElementById(
+            "waiting-question"
+        ).textContent =
+
+            `QUESTION ${questionNumber}`;
+
+
+        document.getElementById(
+            "waiting-status"
+        ).textContent =
+
+            "PLEASE WAIT...";
+
+
+        showScreen(
+            "waiting-screen"
+        );
+
+
+        console.log(
+            `⏳ Q${questionNumber} 당첨자 발표를 기다립니다...`
+        );
+
+
+
+        const winner =
+            await window.waitForWinner(
+                questionNumber
+            );
+
+
+        console.log(
+            `🎉 Q${questionNumber} 당첨자:`,
+            winner
+        );
+
+
+        document.getElementById(
+            "waiting-status"
+        ).textContent =
+
+            `🎉 당첨자: ${winner.nickname}`;
+
+
+        console.log(
+            `⏳ Q${questionNumber} 당첨자 발표 완료. 관리자 NEXT를 기다립니다.`
+        );
+
+
+    }
+
+    catch (error) {
+
+
+        console.error(
+            "❌ 게임 진행 중 오류:",
+            error
+        );
+
+
+        alert(
+            "게임 진행 중 오류가 발생했습니다.\n잠시 후 다시 시도해주세요."
+        );
+
+
+        const nextButton =
+            document.getElementById(
+                "next-button"
+            );
+
+
+        nextButton.disabled = false;
+
+        nextButton.textContent =
+            "▶ LOCK ANSWER";
+
+        nextButton.style.opacity =
+            "1";
+
+    }
+
+}
+
+
+
+/* ========================================= */
+/* 게임 종료 */
+/* ========================================= */
+
+
+function finishGame() {
+
+
+    document.getElementById(
+        "player-name-result"
+    ).textContent =
+        playerName;
+
+
+    showScreen(
+        "complete-screen"
+    );
+
+}
+
+</script>
+
+
+
+<!-- ========================================= -->
+<!-- Firebase -->
+<!-- ========================================= -->
+
+<script type="module">
+
+
+import {
+    initializeApp
+}
+from
+"https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
+
+
+import {
+    getAuth,
+    signInAnonymously
+}
+from
+"https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js";
+
+
+import {
+    getDatabase,
+    ref,
+    set,
+    onValue
+}
+from
+"https://www.gstatic.com/firebasejs/12.18.0/firebase-database.js";
+
+
+
+/* ========================================= */
+/* Firebase 설정 */
+/* ========================================= */
+
+
+const firebaseConfig = {
+    apiKey:
+        "AIzaSyBGXJ3vmjywW8NWYfdER5o8Gr6VV4djjZ0",
+    authDomain:
+        "pds-mind.firebaseapp.com",
+    projectId:
+        "pds-mind",
+    storageBucket:
+        "pds-mind.firebasestorage.app",
+    messagingSenderId:
+        "1033702313593",
+    appId:
+        "1:1033702313593:web:c97c173ac5dce1b9764ea8"
+};
+
+
+
+/* ========================================= */
+/* Firebase 시작 */
+/* ========================================= */
+
+
+const app =
+    initializeApp(
+        firebaseConfig
+    );
+
+
+const auth =
+    getAuth(app);
+
+
+const db =
+    getDatabase(
+
+        app,
+
+        "https://pds-mind-default-rtdb.asia-southeast1.firebasedatabase.app"
+
+    );
+
+
+
+/* ========================================= */
+/* 익명 로그인 */
+/* ========================================= */
+
+
+signInAnonymously(auth)
+
+    .then(() => {
+
+
+        console.log(
+            "================================="
+        );
+
+
+        console.log(
+            "🔥 Firebase 연결 성공!"
+        );
+
+
+        console.log(
+            "🔥 익명 로그인 성공!"
+        );
+
+
+        console.log(
+            "👤 참가자 UID:",
+            auth.currentUser.uid
+        );
+
+
+        console.log(
+            "================================="
+        );
+
+
+        watchGameState();
+
+    })
+
+
+    .catch(error => {
+
+
+        console.error(
+            "❌ Firebase 연결 실패!",
+            error
+        );
+
+    });
+
+
+
+/* ========================================= */
+/* Firebase 전역 등록 */
+/* ========================================= */
+
+
+window.firebaseAuth =
+    auth;
+
+
+window.firebaseDB =
+    db;
+
+
+
+/* ========================================= */
+/* 참가자 답변 저장 */
+/* ========================================= */
+
+
+window.saveAnswer =
+    async function(
+        questionNumber,
+        answerIndex,
+        answerText
+    ) {
+
+
+        if (
+            !auth.currentUser
+        ) {
+
+            throw new Error(
+                "참가자 로그인이 아직 완료되지 않았습니다."
+            );
+
+        }
+
+
+        const uid =
+            auth.currentUser.uid;
+
+
+        const answerRef =
+            ref(
+                db,
+                `answers/question${questionNumber}/${uid}`
+            );
+
+
+        await set(
+            answerRef,
+            {
+
+                uid:
+                    uid,
+
+                nickname:
+                    window.currentPlayerName || "",
+
+                questionNumber:
+                    questionNumber,
+
+                answerIndex:
+                    answerIndex,
+
+                answerText:
+                    answerText,
+
+                submittedAt:
+                    Date.now()
+
+            }
+        );
+
+
+        console.log(
+            `✅ Q${questionNumber} 답변 저장 완료!`,
+            answerText
+        );
+
+    };
+
+
+
+/* ========================================= */
+/* 당첨자 발표 기다리기 */
+/* ========================================= */
+
+
+window.waitForWinner =
+    function(questionNumber) {
+
+
+        return new Promise(
+            resolve => {
+
+
+                const winnerRef =
+                    ref(
+                        db,
+                        `results/question${questionNumber}/winner`
+                    );
+
+
+                console.log(
+                    `⏳ Q${questionNumber} 당첨자 발표 대기 중...`
+                );
+
+
+                onValue(
+
+                    winnerRef,
+
+                    snapshot => {
+
+
+                        const winner =
+                            snapshot.val();
+
+
+                        if (!winner) {
+
+                            return;
+
+                        }
+
+
+                        console.log(
+                            `🎉 Q${questionNumber} 당첨자 발표!`,
+                            winner
+                        );
+
+
+                        resolve(
+                            winner
+                        );
+
+                    },
+
+                    {
+                        onlyOnce: false
+                    }
+
+                );
+
+            }
+        );
+
+    };
+
+
+
+/* ========================================= */
+/* 게임 상태 감지 */
+/* ========================================= */
+
+
+window.watchGameState =
+    function() {
+
+
+        const gameStateRef =
+            ref(
+                db,
+                "gameState"
+            );
+
+
+        onValue(
+
+            gameStateRef,
+
+            snapshot => {
+
+
+                const gameState =
+                    snapshot.val();
+
+
+                if (!gameState) {
+
+                    console.log(
+                        "⏳ 게임 상태를 기다리는 중..."
+                    );
+
+                    return;
+
+                }
+
+
+                console.log(
+                    "🎮 게임 상태 변경:",
+                    gameState
+                );
+
+                window.latestGameState = gameState;
+
+
+                const questionNumber =
+                    gameState.currentQuestion;
+
+
+                const status =
+                    gameState.status;
+
+
+
+                /* ================================= */
+                /* 관리자 NEXT → 해당 질문으로 이동 */
+                /* ================================= */
+
+
+                if (
+
+                    window.gameStarted
+                    &&
+
+                    status === "answering"
+
+                    &&
+
+                    questionNumber >= 1
+
+                    &&
+
+                    questionNumber <=
+                        questions.length
+
+                    &&
+
+                    questionNumber !==
+                        currentQuestion + 1
+
+                ) {
+
+
+                    currentQuestion =
+                        questionNumber - 1;
+
+
+                    console.log(
+                        `➡️ 관리자 NEXT → Q${questionNumber}`
+                    );
+
+
+                    showQuestion();
+
+                }
+
+
+
+                /* ================================= */
+                /* 게임 종료 */
+                /* ================================= */
+
+
+                if (
+                    window.gameStarted
+                    &&
+                    status === "finished"
+                ) {
+
+
+                    finishGame();
+
+                }
+
+            }
+
+        );
+
+    };
+
+
+</script>
+
+
+</body>
+
+</html>
